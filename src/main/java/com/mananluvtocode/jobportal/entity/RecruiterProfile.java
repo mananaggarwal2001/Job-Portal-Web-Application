@@ -3,13 +3,16 @@ package com.mananluvtocode.jobportal.entity;
 import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Entity
 @Table(name = "recruiter_profile")
 public class RecruiterProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_account_id")
-    private Long userAccountId;
+    private Integer userAccountId;
     @Column(name = "city")
     private String city;
     @Column(name = "company")
@@ -23,6 +26,10 @@ public class RecruiterProfile {
     @Column(name = "profile_photo", nullable = true, length = 64)
     private String profilePhoto;
 
+    @Column(name = "state")
+    private String state;
+
+
     @OneToOne
     @JoinColumn(name = "user_account_id")
     @MapsId
@@ -35,24 +42,25 @@ public class RecruiterProfile {
     }
 
 
-    public RecruiterProfile(String city, String company, String country, String firstName, String lastName, String profilePhoto) {
+    public RecruiterProfile(String city, String company, String country, String firstName, String lastName, String profilePhoto, String state, Users userid) {
         this.city = city;
         this.company = company;
         this.country = country;
         this.firstName = firstName;
         this.lastName = lastName;
         this.profilePhoto = profilePhoto;
+        this.state = state;
     }
 
     public RecruiterProfile(Users users) {
         this.userid = users;
     }
 
-    public Long getUserAccountId() {
+    public Integer getUserAccountId() {
         return userAccountId;
     }
 
-    public void setUserAccountId(Long userAccountId) {
+    public void setUserAccountId(Integer userAccountId) {
         this.userAccountId = userAccountId;
     }
 
@@ -110,6 +118,14 @@ public class RecruiterProfile {
 
     public void setUserid(Users userid) {
         this.userid = userid;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     @Override

@@ -10,7 +10,7 @@ public class JobSeekerProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_account_id")
-    private Long userAccountId;
+    private Integer userAccountId;
 
     @OneToOne
     @JoinColumn(name = "user_account_id")
@@ -47,7 +47,7 @@ public class JobSeekerProfile {
 
     }
 
-    public JobSeekerProfile(Long userAccountId, Users userid, String city, String country, String employmentType, String firstName, String lastName, String profilePhoto, String resume, String state, String workAuthorization, List<Skills> skills) {
+    public JobSeekerProfile(Integer userAccountId, Users userid, String city, String country, String employmentType, String firstName, String lastName, String profilePhoto, String resume, String state, String workAuthorization, List<Skills> skills) {
         this.userAccountId = userAccountId;
         this.userid = userid;
         this.city = city;
@@ -66,11 +66,11 @@ public class JobSeekerProfile {
         this.userid = users;
     }
 
-    public Long getUserAccountId() {
+    public Integer getUserAccountId() {
         return userAccountId;
     }
 
-    public void setUserAccountId(Long userAccountId) {
+    public void setUserAccountId(Integer userAccountId) {
         this.userAccountId = userAccountId;
     }
 
