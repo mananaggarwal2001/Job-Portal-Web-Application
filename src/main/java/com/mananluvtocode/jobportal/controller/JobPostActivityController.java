@@ -1,6 +1,7 @@
 package com.mananluvtocode.jobportal.controller;
 
 import com.mananluvtocode.jobportal.entity.JobPostActivity;
+import com.mananluvtocode.jobportal.entity.RecruiterJobsDTO;
 import com.mananluvtocode.jobportal.entity.RecruiterProfile;
 import com.mananluvtocode.jobportal.entity.Users;
 import com.mananluvtocode.jobportal.services.JobPostActivityService;
@@ -8,6 +9,7 @@ import com.mananluvtocode.jobportal.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class JobPostActivityController {
@@ -35,6 +38,10 @@ public class JobPostActivityController {
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String getUsername = authentication.getName();
             themodel.addAttribute("username", getUsername);
+            if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))) {
+                List<RecruiterJobsDTO> recruiterJobsDTOS = jobPostActivityService.recruiterJobsDTOList(((RecruiterProfile) currentUserProfile).getUserAccountId());
+                themodel.addAttribute("jobPost", recruiterJobsDTOS);
+            }
         }
         themodel.addAttribute("user", currentUserProfile);
         return "dashboard";
