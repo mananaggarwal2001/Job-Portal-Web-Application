@@ -109,6 +109,7 @@ public class RecruiterProfile {
         if (profilePhoto == null) {
             return null;
         }
+        System.out.println("profilePhoto = " + profilePhoto);
         return "recruiter/" + userAccountId + "/" + profilePhoto;
     }
 

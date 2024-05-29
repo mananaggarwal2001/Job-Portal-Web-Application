@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class JobPostActivityService {
@@ -30,5 +31,14 @@ public class JobPostActivityService {
             recruiterJobsDTOList.add(new RecruiterJobsDTO(recruiterJobs1.getTotalCandidates(), recruiterJobs1.getJob_post_id(), recruiterJobs1.getJob_title(), location, company));
         }
         return recruiterJobsDTOList;
+    }
+
+    public JobPostActivity getJobDetails(int id) {
+        Optional<JobPostActivity> jobPostActivity = jobPostActivityRepository.findById(id);
+        JobPostActivity jobPostActivity1 = null;
+        if (jobPostActivity.isPresent()) {
+            jobPostActivity1 = jobPostActivity.get();
+        }
+        return jobPostActivity1;
     }
 }
