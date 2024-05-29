@@ -4,6 +4,7 @@ import com.mananluvtocode.jobportal.entity.RecruiterProfile;
 import com.mananluvtocode.jobportal.entity.Users;
 import com.mananluvtocode.jobportal.repository.UserRepository;
 import com.mananluvtocode.jobportal.services.RecruiterProfileService;
+import com.mananluvtocode.jobportal.util.FileSaveUtil;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,4 +48,29 @@ public class RecruiterProfileController {
     }
 
     // for adding the recruiter profile and photo for this profile for doing the further stuffs.
+    @PostMapping("/addNew")
+    public String addNewRecruiterDetails(RecruiterProfile recruiterProfile, @RequestParam("image") MultipartFile multipartFile, Model themodel) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            String getName = authentication.getName();
+            Users user = userRepository.findByEmail(getName).orElseThrow(() -> new UsernameNotFoundException("Couldn't Find the User profile"));
+            recruiterProfile.setUserAccountId(user.getId());
+            recruiterProfile.setUserid(user);
+        }
+        String fileName = "";
+        if (!multipartFile.getOriginalFilename().equals("")) {
+            fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+        }
+        recruiterProfile.setProfilePhoto(fileName);
+        RecruiterProfile savedProfile = recruiterProfileService.addNew(recruiterProfile);
+        // adding the destination for doing the file upload.
+        String uploadDir = "recruiter/" + savedProfile.getUserAccountId();
+        try {
+            FileSaveUtil.addPhoto(uploadDir, fileName, multipartFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Couldn't Save the file");
+        }
+        return "redirect:/dashboard";
+    }
 }

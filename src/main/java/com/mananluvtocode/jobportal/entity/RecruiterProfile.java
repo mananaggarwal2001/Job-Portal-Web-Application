@@ -104,6 +104,14 @@ public class RecruiterProfile {
         this.lastName = lastName;
     }
 
+    @Transient
+    public String getPhotosImagePath() {
+        if (profilePhoto == null) {
+            return null;
+        }
+        return "recruiter/" + userAccountId + "/" + profilePhoto;
+    }
+
     public String getProfilePhoto() {
         return profilePhoto;
     }
