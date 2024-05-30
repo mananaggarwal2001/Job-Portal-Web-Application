@@ -6,9 +6,15 @@ import com.mananluvtocode.jobportal.entity.Users;
 import com.mananluvtocode.jobportal.repository.UserRepository;
 import com.mananluvtocode.jobportal.services.JobSeekerProfileService;
 import com.mananluvtocode.jobportal.services.UserService;
+import com.mananluvtocode.jobportal.util.FileDownloadUtil;
 import com.mananluvtocode.jobportal.util.FileSaveUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -117,5 +123,25 @@ public class JobSeekerProfileController {
         }
         themodel.addAttribute("profile", jobSeekerProfile1);
         return "job-seeker-profile";
+    }
+
+    @GetMapping("/downloadResume")
+    public ResponseEntity<?> downloadResume(@RequestParam("fileName") String fileName, @RequestParam("userID") Integer userId) {
+        FileDownloadUtil fileDownloadUtil = new FileDownloadUtil();
+        Resource resource = null;
+        try {
+            resource = fileDownloadUtil.getFileAsResource("jobseeker/" + userId, fileName);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (resource == null) {
+            System.out.println(resource);
+            return new ResponseEntity<>("file not found", HttpStatus.NOT_FOUND);
+        }
+        String contentType = "application/octet-stream";
+        String headerValue = "attachment; fileName=\"" + resource.getFilename() + "\"";
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
+                .body(resource);
     }
 }
