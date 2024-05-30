@@ -106,6 +106,15 @@ public class JobSeekerProfile {
         this.employmentType = employmentType;
     }
 
+    @Transient
+    public String getPhotosImagePath() {
+        if (profilePhoto == null || userAccountId == null) {
+            return null;
+        }
+        System.out.println("profilePhoto = " + profilePhoto);
+        return "jobseeker/" + userAccountId + "/" + profilePhoto;
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -176,7 +185,6 @@ public class JobSeekerProfile {
                 ", resume='" + resume + '\'' +
                 ", state='" + state + '\'' +
                 ", workAuthorization='" + workAuthorization + '\'' +
-                ", skills=" + skills +
                 '}';
     }
 }
