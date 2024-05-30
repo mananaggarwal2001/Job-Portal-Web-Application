@@ -47,4 +47,8 @@ public class JobSeekerProfileService {
         }
         return currentProfile;
     }
+
+    public Optional<JobSeekerProfile> getOne(int id) {
+        return jobSeekerProfileRepository.findById(id);
+    }
 }

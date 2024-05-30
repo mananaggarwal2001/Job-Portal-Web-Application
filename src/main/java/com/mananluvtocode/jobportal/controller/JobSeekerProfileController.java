@@ -105,4 +105,17 @@ public class JobSeekerProfileController {
         System.out.println(skillsList);
         return "redirect:/dashboard/";
     }
+
+    // adding the post mapping for viewing the job seeker profile controller for doing the work
+
+    @GetMapping("/{id}")
+    public String candidateProfile(@PathVariable("id") int id, Model themodel) {
+        Optional<JobSeekerProfile> jobSeekerProfile = jobSeekerProfileService.getOne(id);
+        JobSeekerProfile jobSeekerProfile1 = null;
+        if (jobSeekerProfile.isPresent()) {
+            jobSeekerProfile1 = jobSeekerProfile.get();
+        }
+        themodel.addAttribute("profile", jobSeekerProfile1);
+        return "job-seeker-profile";
+    }
 }
