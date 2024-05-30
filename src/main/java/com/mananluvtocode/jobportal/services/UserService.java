@@ -53,7 +53,7 @@ public class UserService {
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String username = authentication.getName();
             Users users = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Couldn't Found the username"));
-            long userId = users.getId();
+            Integer userId = users.getId();
             if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))) {
                 RecruiterProfile recruiterProfile = recruiterProfileRepository.findById((int) userId).orElse(new RecruiterProfile());
                 return recruiterProfile;
@@ -74,5 +74,9 @@ public class UserService {
             return users;
         }
         return null;
+    }
+
+    public Users findByEmail(String currentLoggedInUser) {
+        return userRepository.findByEmail(currentLoggedInUser).orElse(null);
     }
 }

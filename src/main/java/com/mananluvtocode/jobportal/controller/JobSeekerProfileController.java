@@ -103,6 +103,6 @@ public class JobSeekerProfileController {
         }
         System.out.println(savedProfile);
         System.out.println(skillsList);
-        return "redirect:/dashboard";
+        return "redirect:/dashboard/";
     }
 }

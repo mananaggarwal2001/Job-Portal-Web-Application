@@ -71,6 +71,6 @@ public class RecruiterProfileController {
             e.printStackTrace();
             System.out.println("Couldn't Save the file");
         }
-        return "redirect:/dashboard";
+        return "redirect:/dashboard/";
     }
 }
