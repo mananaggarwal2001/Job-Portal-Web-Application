@@ -5,8 +5,10 @@ import com.mananluvtocode.jobportal.repository.JobPostActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -40,5 +42,14 @@ public class JobPostActivityService {
             jobPostActivity1 = jobPostActivity.get();
         }
         return jobPostActivity1;
+    }
+
+    public List<JobPostActivity> getAllJobs() {
+        return jobPostActivityRepository.findAll();
+    }
+
+    public List<JobPostActivity> searchForJobs(String job, String location, List<String> type, List<String> remote, LocalDate searchDate) {
+        return Objects.isNull(searchDate)?jobPostActivityRepository.searchWithoutDate(job,location, type, remote):
+                jobPostActivityRepository.searchWithDate(job, location, type,remote,searchDate);
     }
 }
