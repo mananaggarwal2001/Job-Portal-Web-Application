@@ -27,8 +27,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +74,7 @@ public class JobSeekerProfileController {
     }
 
     @PostMapping("/addNew")
-    public String addjobprofile(Model themodel, @ModelAttribute("profile") JobSeekerProfile jobSeekerProfile, @RequestParam("image") MultipartFile image, @RequestParam("pdf") MultipartFile resume, BindingResult result) {
+    public String addjobprofile(Model themodel, @ModelAttribute("profile") JobSeekerProfile jobSeekerProfile, @RequestParam("image") MultipartFile image, @RequestParam("pdf") MultipartFile resume, BindingResult result) throws IOException, SQLException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String getCurrentLoggedInUser = authentication.getName();
@@ -87,9 +90,12 @@ public class JobSeekerProfileController {
         }
         String imageName = "";
         String resumeName = "";
+        System.out.println(image.getOriginalFilename());
         if (!Objects.equals(image.getOriginalFilename(), "")) {
-            imageName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
-            jobSeekerProfile.setProfilePhoto(imageName);
+            System.out.println("Image for the multipart file is :- " + image.getOriginalFilename());
+            byte[] imagebytes = image.getBytes();
+            Blob blob = new SerialBlob(imagebytes);
+            jobSeekerProfile.setProfilePhoto(blob);
         }
         if (!Objects.equals(resume.getOriginalFilename(), "")) {
             resumeName = StringUtils.cleanPath(Objects.requireNonNull(resume.getOriginalFilename()));
@@ -143,5 +149,15 @@ public class JobSeekerProfileController {
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
                 .body(resource);
+    }
+
+    // for displaying the profile photo
+    @GetMapping("/displayprofilephoto")
+    public ResponseEntity<byte[]> imageResponse() throws SQLException {
+        JobSeekerProfile jobSeekerProfile = jobSeekerProfileService.getCurrentSeekerProfile();
+        byte[] imagebyte = null;
+        imagebyte = jobSeekerProfile.getProfilePhoto().getBytes(1, (int) jobSeekerProfile.getProfilePhoto().length());
+        System.out.println(imagebyte.length);
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imagebyte);
     }
 }

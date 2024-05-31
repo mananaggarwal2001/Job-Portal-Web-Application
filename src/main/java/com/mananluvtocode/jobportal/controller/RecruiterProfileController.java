@@ -5,6 +5,8 @@ import com.mananluvtocode.jobportal.entity.Users;
 import com.mananluvtocode.jobportal.repository.UserRepository;
 import com.mananluvtocode.jobportal.services.RecruiterProfileService;
 import com.mananluvtocode.jobportal.util.FileSaveUtil;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -49,7 +54,7 @@ public class RecruiterProfileController {
 
     // for adding the recruiter profile and photo for this profile for doing the further stuffs.
     @PostMapping("/addNew")
-    public String addNewRecruiterDetails(RecruiterProfile recruiterProfile, @RequestParam("image") MultipartFile multipartFile, Model themodel) {
+    public String addNewRecruiterDetails(RecruiterProfile recruiterProfile, @RequestParam("image") MultipartFile multipartFile, Model themodel) throws IOException, SQLException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String getName = authentication.getName();
@@ -57,20 +62,20 @@ public class RecruiterProfileController {
             recruiterProfile.setUserAccountId(user.getId());
             recruiterProfile.setUserid(user);
         }
-        String fileName = "";
+        Blob fileName = null;
         if (!multipartFile.getOriginalFilename().equals("")) {
-            fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+            fileName = new SerialBlob(multipartFile.getBytes());
         }
         recruiterProfile.setProfilePhoto(fileName);
         RecruiterProfile savedProfile = recruiterProfileService.addNew(recruiterProfile);
-        // adding the destination for doing the file upload.
-        String uploadDir = "recruiter/" + savedProfile.getUserAccountId();
-        try {
-            FileSaveUtil.addPhoto(uploadDir, fileName, multipartFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Couldn't Save the file");
-        }
+        System.out.println(savedProfile);
         return "redirect:/dashboard/";
+    }
+
+    @GetMapping("/displayprofilephoto")
+    public ResponseEntity<byte[]> displayprofilePhoto() throws SQLException {
+        RecruiterProfile recruiterProfile = recruiterProfileService.getCurrentRecruiterProfile();
+        byte[] imagebyte = recruiterProfile.getProfilePhoto().getBytes(1, (int) recruiterProfile.getProfilePhoto().length());
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imagebyte);
     }
 }

@@ -2,9 +2,13 @@ package com.mananluvtocode.jobportal.entity;
 
 import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Blob;
+import java.sql.SQLException;
 
 @Entity
 @Table(name = "recruiter_profile")
@@ -23,8 +27,9 @@ public class RecruiterProfile {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
-    @Column(name = "profile_photo", nullable = true, length = 64)
-    private String profilePhoto;
+    @Column(name = "profile_photo")
+    @Lob
+    private Blob profilePhoto;
 
     @Column(name = "state")
     private String state;
@@ -42,7 +47,7 @@ public class RecruiterProfile {
     }
 
 
-    public RecruiterProfile(String city, String company, String country, String firstName, String lastName, String profilePhoto, String state, Users userid) {
+    public RecruiterProfile(String city, String company, String country, String firstName, String lastName, Blob profilePhoto, String state, Users userid) {
         this.city = city;
         this.company = company;
         this.country = country;
@@ -105,19 +110,20 @@ public class RecruiterProfile {
     }
 
     @Transient
-    public String getPhotosImagePath() {
+    public ResponseEntity<byte[]> getPhotosImagePath() throws SQLException {
         if (profilePhoto == null) {
             return null;
         }
-        System.out.println("profilePhoto = " + profilePhoto);
-        return "recruiter/" + userAccountId + "/" + profilePhoto;
+        byte[] profilePhotoBytes = null;
+        profilePhotoBytes = profilePhoto.getBytes(1, (int) profilePhoto.length());
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(profilePhotoBytes);
     }
 
-    public String getProfilePhoto() {
+    public Blob getProfilePhoto() {
         return profilePhoto;
     }
 
-    public void setProfilePhoto(String profilePhoto) {
+    public void setProfilePhoto(Blob profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 

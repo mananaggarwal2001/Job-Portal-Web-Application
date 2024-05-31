@@ -1,7 +1,12 @@
 package com.mananluvtocode.jobportal.entity;
 
 import jakarta.persistence.*;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -12,7 +17,7 @@ public class JobSeekerProfile {
     @Column(name = "user_account_id")
     private Integer userAccountId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_account_id")
     @MapsId
     private Users userid;
@@ -30,8 +35,9 @@ public class JobSeekerProfile {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
-    @Column(name = "profile_photo", nullable = true, length = 64)
-    private String profilePhoto;
+    @Column(name = "profile_photo")
+    @Lob
+    private Blob profilePhoto;
 
     @Column(name = "resume")
     private String resume;
@@ -47,7 +53,7 @@ public class JobSeekerProfile {
 
     }
 
-    public JobSeekerProfile(Integer userAccountId, Users userid, String city, String country, String employmentType, String firstName, String lastName, String profilePhoto, String resume, String state, String workAuthorization, List<Skills> skills) {
+    public JobSeekerProfile(Integer userAccountId, Users userid, String city, String country, String employmentType, String firstName, String lastName, Blob profilePhoto, String resume, String state, String workAuthorization, List<Skills> skills) {
         this.userAccountId = userAccountId;
         this.userid = userid;
         this.city = city;
@@ -107,12 +113,13 @@ public class JobSeekerProfile {
     }
 
     @Transient
-    public String getPhotosImagePath() {
+    public ResponseEntity<byte[]> getPhotosImagePath() throws SQLException {
         if (profilePhoto == null || userAccountId == null) {
             return null;
         }
-        System.out.println("profilePhoto = " + profilePhoto);
-        return "jobseeker/" + userAccountId + "/" + profilePhoto;
+        byte[] imageByte = null;
+        imageByte = profilePhoto.getBytes(1, (int) profilePhoto.length());
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageByte);
     }
 
     public String getFirstName() {
@@ -131,11 +138,11 @@ public class JobSeekerProfile {
         this.lastName = lastName;
     }
 
-    public String getProfilePhoto() {
+    public Blob getProfilePhoto() {
         return profilePhoto;
     }
 
-    public void setProfilePhoto(String profilePhoto) {
+    public void setProfilePhoto(Blob profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 
