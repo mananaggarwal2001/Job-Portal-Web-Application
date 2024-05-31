@@ -1,10 +1,8 @@
 package com.mananluvtocode.jobportal.controller;
-
 import com.mananluvtocode.jobportal.entity.RecruiterProfile;
 import com.mananluvtocode.jobportal.entity.Users;
 import com.mananluvtocode.jobportal.repository.UserRepository;
 import com.mananluvtocode.jobportal.services.RecruiterProfileService;
-import com.mananluvtocode.jobportal.util.FileSaveUtil;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -13,18 +11,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
-import java.util.Objects;
 import java.util.Optional;
 
 @Controller
