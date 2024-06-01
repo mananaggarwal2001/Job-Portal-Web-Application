@@ -78,8 +78,17 @@
                 class="rounded-circle me-3"
                 height="50px"
                 width="50x"
+                sec:authorize="hasAuthority('Recruiter')"
                 th:if="${user.photosImagePath!=null}"
-                th:src="@{${user?.photosImagePath}}"
+                th:src="@{/recruiter-profile/displayprofilephoto}"
+        />
+        <img
+                class="rounded-circle me-3"
+                height="50px"
+                width="50x"
+                sec:authorize="hasAuthority('Job Seeker')"
+                th:if="${user.photosImagePath!=null}"
+                th:src="@{/job-seeker-profile/displayprofilephoto}"
         />
         <label th:text="${user.firstName+' '+user.lastName}" class="nav-item nav-link px-2 me-3"></label>
 

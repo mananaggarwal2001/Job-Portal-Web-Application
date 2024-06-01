@@ -176,7 +176,7 @@ public class JobPostActivityController {
         themodel.addAttribute("jobPostActivity", jobPostActivity);
         JobPostActivity savedJobPost = jobPostActivityService.addNew(jobPostActivity);
         System.out.println(savedJobPost);
-        return "redirect:/dashboard";
+        return "redirect:/dashboard/";
     }
 
     // implementing the feature for the global search
