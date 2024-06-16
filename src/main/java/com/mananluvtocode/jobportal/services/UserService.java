@@ -6,7 +6,6 @@ import com.mananluvtocode.jobportal.entity.Users;
 import com.mananluvtocode.jobportal.repository.JobSeekerProfileRepository;
 import com.mananluvtocode.jobportal.repository.RecruiterProfileRepository;
 import com.mananluvtocode.jobportal.repository.UserRepository;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
